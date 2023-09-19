@@ -1,0 +1,39 @@
+name: Build and push Image to ACR
+
+on:
+  release:
+    types: [published]
+
+permissions: write-all
+
+concurrency:
+  group: cd-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-20.04
+    environment: riiid-acr
+    env:
+      ACR_REPOSITORY: quizium-backend-b2b
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Azure ACR
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build, tag, and push image to Azure ACR
+        env:
+          ACR_REGISTRY: riiid.azurecr.io
+          ACR_REPOSITORY: quizium-backend
+          IMAGE_TAG: ${{ github.event.release.tag_name || github.sha }}
+        run: |
+          az acr login --name riiid
+          docker build . --tag $ACR_REGISTRY/$ACR_REPOSITORY:$IMAGE_TAG
+          docker push $ACR_REGISTRY/$ACR_REPOSITORY:$IMAGE_TAG
