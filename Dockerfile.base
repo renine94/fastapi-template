@@ -1,0 +1,23 @@
+FROM --platform=linux/amd64 ubuntu:20.04
+
+EXPOSE 8000
+
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+
+COPY . /var/app
+
+WORKDIR /var/app
+
+RUN apt update && \
+    apt install software-properties-common -y && \
+    add-apt-repository ppa:deadsnakes/ppa && \
+    apt update && \
+    apt install ffmpeg build-essential git python3.11 python3.11-dev python3.11-distutils curl locales -y && \
+    curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11 && \
+    rm -rf /var/lib/apt/lists/* && \
+    locale-gen en_US.UTF-8
+
+RUN python3.11 -m pip install --upgrade pip && \
+    python3.11 -m pip --no-cache-dir install -r requirements/prod.txt
