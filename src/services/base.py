@@ -1,28 +1,28 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta
+from abc import abstractmethod
 
 
 class BaseService(metaclass=ABCMeta):
-
-    @abstractmethod
-    def create(self):
+    @staticmethod
+    def create():
         raise NotImplemented
 
-    @abstractmethod
-    def bulk_create(self):
+    @staticmethod
+    def bulk_create():
         raise NotImplemented
 
-    @abstractmethod
-    def get(self):
+    @staticmethod
+    def get():
         raise NotImplemented
 
-    @abstractmethod
-    def filter(self):
+    @staticmethod
+    def filter():
         raise NotImplemented
 
-    @abstractmethod
-    def update(self):
+    @staticmethod
+    def update():
         raise NotImplemented
 
-    @abstractmethod
-    def delete(self):
+    @staticmethod
+    def delete():
         raise NotImplemented

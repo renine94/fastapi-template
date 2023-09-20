@@ -8,4 +8,6 @@ router = APIRouter(prefix="/question")
 
 @router.post("", status_code=201)
 async def create_question(request: QuestionCreateRequest):
-    return QuestionService.bulk_create(request)
+    script_parts = QuestionService.split_script(**request.model_dump())
+    questions = await QuestionService.bulk_create_from_openai(script_parts)
+    return questions

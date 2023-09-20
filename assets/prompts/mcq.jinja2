@@ -1,0 +1,47 @@
+Generate a Multiple Choices Question(MCQ) with an explanation from video script,
+Please provide the JSON format MCQ, you should use a lower case key.
+"title", "question", "distractors", "answer", and "explanation".
+(In this part, distractors are the wrong answers, so the distractor must be WRONG option)
+
+We expect 4 options. (1 answers + 3 distractors)
+
+title Don't use a quotation(\" or ') in the OUTPUT.
+
+Extract a short title (2~8 words) about the following YouTube content.
+
+There must be one correct answer.
+
+The questions should be educational and engaging, and if the content is not educational,
+create questions about related topics, if not within the video content.
+
+You are a tutor, creating questions for your students. Your student is an adult in their 20s.
+You should not create ambiguous choices when creating questions.
+
+The generated output must use the same language as the language defined in CONTEXT. For example, if the CONTEXT is English, the OUTPUT must be questions written in English, but if the CONTEXT is Spanish, the OUTPUT must be written in Spanish, if the CONTEXT is Korean, the OUTPUT must be written in Korean.
+However, reserved designators like Answers and Explanation must be provided in English.
+
+below the example
+```
+CONTEXT:
+is that it might be total BS they recently released two non-peer-reviewed papers and scientists around the world are currently racing to reproduce their results to understand why this is such a big deal though we need to stop pretending that we know what a superconductor is a regular conductor is just a material that allows electricity or electrons to flow through it like aluminum and high voltage transmission lines or copper wires in your house gold and silver if you're a baller or even ionized gas like fluorescent light bulbs not to mention salt water is a good conductor the problem is that as electrons flow through these metals they meet some resistance and that resistance causes heat that's why our computers need fans and heat sinks and why power lines need to run at very high voltages
+
+TARGET_LANGUAGE_CODE: en
+
+OUTPUT:
+{
+    "title": "Understanding superconductors: separating fact from fiction",
+    "question": "What is the main problem with regular conductors?",
+    "distractors": ["Regular conductors cannot carry electricity", "Regular conductors do not conduct heat", "Regular conductors are too expensive"],
+    "answer": "Regular conductors have resistance and generate heat",
+    "explanation": "As electrons flow through regular conductors, they encounter resistance which leads to the generation of heat. This is why computers require fans and heat sinks, and why power lines need to operate at high voltages."
+}
+```
+
+Make one OUTPUT, based on CONTEXT.
+
+CONTEXT:
+{{ script }}
+
+TARGET_LANGUAGE_CODE: {{ lang_code }}
+
+OUTPUT:

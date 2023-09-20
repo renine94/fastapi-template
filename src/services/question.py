@@ -1,40 +1,34 @@
+import asyncio
+
 from src.services.base import BaseService
+from src.utils.helpers.helper_language import LanguageHelper
+from src.utils.third_party.openai import OpenAI
 
 
 class QuestionService(BaseService):
     @staticmethod
-    def bulk_create(*args, **kwargs):
+    def split_script(script: str, count: int) -> list[str]:
         """대본과 문제 생성 원하는 개수를 받아서 생성하고 리턴한다."""
-        ...
-        # lang_code = YoutubeAPI.get_default_video_lang_code(partner_video_id)
-        # expected_number_of_question = 5
-        #
-        # duration = video.length
-        # chunk_duration = duration // expected_number_of_question
-        # chunk_text_length = len(subtitle) // expected_number_of_question
-        # chapter_dict_list = []
-        #
-        # start_time = 0
-        # start_text_pos = 0
-        # for i in range(expected_number_of_question):
-        #     is_end = i >= (expected_number_of_question - 1)
-        #     end_time = (start_time + chunk_duration) if not is_end else duration
-        #     end_text_pos = (start_text_pos + chunk_text_length) if not is_end else len(subtitle)
-        #     chapter_dict_list.append(
-        #         {
-        #             "subtitle": subtitle[start_text_pos:end_text_pos],
-        #             "start": start_time,
-        #             "end": end_time,
-        #         }
-        #     )
-        #     start_time = end_time
-        #     start_text_pos = end_text_pos
-        #
-        # tasks = [aget_gpt_chapter_title(chapter_dict["subtitle"], lang_code) for chapter_dict in chapter_dict_list]
-        # chapter_titles = await asyncio.gather(*tasks)
-        # for chapter, chapter_title in zip(chapter_dict_list, chapter_titles):
-        #     chapter["title"] = chapter_title
-        #
-        # chapter_dto_list = [ChapterDTO(**chapter_info) for chapter_info in chapter_dict_list]
-        # return ChapterLogicEnum.LOGICS, chapter_dto_list
-        return {"message": "TBD"}
+        chunk_size = len(script) // count
+
+        split_text_list = []
+        for idx, size in enumerate(range(chunk_size, len(script) + 1, chunk_size)):
+            text = script[chunk_size * idx : size]
+            if idx + 1 == count:
+                text = script[chunk_size * idx :]
+            split_text_list.append(text)
+
+        return split_text_list
+
+    @staticmethod
+    async def bulk_create_from_openai(scripts: list[str]) -> list[dict]:
+        lang_code = LanguageHelper.get_lang_code_from_str("".join(scripts))
+
+        tasks = []
+        for script in scripts:
+            prompt = OpenAI.get_prompt("mcq.jinja2", script=script, lang_code=lang_code)
+            tasks.append(OpenAI.aget_response(prompt))
+
+        responses = await asyncio.gather(*tasks)
+        questions = [obj["data"] for obj in responses if obj]
+        return questions

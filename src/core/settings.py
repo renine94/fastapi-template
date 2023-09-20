@@ -11,10 +11,11 @@ load_dotenv()
 
 class Settings(BaseSettings):
     ENV: EnvEnum = EnvEnum.LOCAL
-    VERSION: str = "0.0.1"
+    VERSION: str = "0.0.2"
     BASE_DIR: str = str(Path(__file__).resolve().parent.parent.parent)
 
     API_KEY: str = ""
+    API_KEY_AZURE_OPENAI: str = ""
 
     model_config = SettingsConfigDict(env_prefix="CONF_")
 

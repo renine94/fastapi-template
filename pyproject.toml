@@ -29,3 +29,6 @@ known_third_party = [
     "fastapi",
 ]
 force_single_line = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"  # test-code 작성시 비동기 데코레이터 안써도 됨 pytest.mark.asyncio
